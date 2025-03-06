@@ -4,26 +4,31 @@ project(AiClient VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Quick Network)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
 qt_add_executable(appAiClient
     main.cpp
+    aiclient.h
+    aiclient.cpp
 )
 
 qt_add_qml_module(appAiClient
     URI AiClient
     VERSION 1.0
     QML_FILES
-        Main.qml
+    Main.qml
+    InputMessage.qml
+    UserMessageItem.qml
+    SystemMessageItem.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
 set_target_properties(appAiClient PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appAiClient
+    #    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appAiClient
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
@@ -31,7 +36,7 @@ set_target_properties(appAiClient PROPERTIES
 )
 
 target_link_libraries(appAiClient
-    PRIVATE Qt6::Quick
+    PRIVATE Qt6::Quick Qt6::Network
 )
 
 include(GNUInstallDirs)
