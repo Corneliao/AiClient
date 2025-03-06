@@ -1,8 +1,15 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
+#include "Quick/QuickFramelessWindow.h"
 #include "aiclient.h"
-class StreamRequester : public QObject {};
+static QObject *AiClientProvider(QQmlEngine *engine, QJSEngine *jsEngine) {
+  Q_UNUSED(engine);
+  Q_UNUSED(jsEngine);
+
+  auto client = new AiClient;
+  return client;
+}
 
 // 使用示例
 int main(int argc, char *argv[]) {
@@ -21,7 +28,9 @@ int main(int argc, char *argv[]) {
 
   // requester.sendRequest("你好，请介绍一下量子计算");
 
-  qmlRegisterType<AiClient>("com.AiClient", 1, 0, "AiClient");
+  qmlRegisterType<QuickFramelessWindow>("com.FramelessWindow", 1, 0, "FramelessWindow");
+  qmlRegisterSingletonType(QUrl("qrc:/Singleton/GlobalProperties.qml"), "com.Global", 1, 0, "Properties");
+  qmlRegisterSingletonType<AiClient>("com.AiClient", 1, 0, "AiClient", AiClientProvider);
   QQmlApplicationEngine engine;
   QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed, &a, [&]() { a.quit(); });
   engine.loadFromModule("AiClient", "Main");

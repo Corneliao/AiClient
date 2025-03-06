@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/JavaScript">
+        <file>Worker.js</file>
+    </qresource>
+    <qresource prefix="/Singleton">
+        <file>GlobalProperties.qml</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>res/ico/deepseek.svg</file>
+    </qresource>
+</RCC>

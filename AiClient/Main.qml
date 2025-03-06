@@ -3,51 +3,74 @@ import QtQuick.Controls
 import com.AiClient
 import QtQml
 import QtQuick.Layouts
+import com.Global
+import com.FramelessWindow
 
-Window {
-    width: 640
-    height: 480
-    visible: true
-    title: qsTr("Hello World")
-    AiClient {
-        id: ai
-        Component.onCompleted: {
-
-            // ai.sendRequest("介绍一下自己")
-        }
-    }
-
-    Connections {
-        target: ai
-        function onReceivedDelta(content) {
-            var endPosition = text_.text.length
-            text_.insert(endPosition, content)
-        }
+FramelessWindow {
+    id: mainWindow
+    width: 1075
+    height: 750
+    Component.onCompleted: {
+        mainWindow.moveCenter()
     }
 
     ListModel {
         id: itemModel
     }
 
+    Timer {
+        id: scrollToButtom
+        repeat: false
+        interval: 20
+        onTriggered: {
+            view_.positionViewAtEnd()
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 15
+        anchors.leftMargin: 30
+        anchors.bottomMargin: 15
+        anchors.rightMargin: 15
+        anchors.topMargin: 15
         ListView {
+            id: view_
             Layout.fillHeight: true
             Layout.fillWidth: true
             spacing: 10
             clip: true
             model: itemModel
             delegate: Loader {
+
+                id: loader_
+                function test(height) {
+                    loader_.height = height
+                    scrollToButtom.start()
+                }
+
                 required property string type
                 required property string message
+                required property int index
                 width: ListView.view.width
-                height: type === "user" ? 40 : 60
-                source: type === "user" ? Qt.url("UserMessageItem.qml") : ""
+                asynchronous: true
+                height: type === "User" ? 40 : 0
+                source: type === "User" ? Qt.url(
+                                              "UserMessageItem.qml") : Qt.url(
+                                              "SystemMessageItem.qml")
                 onLoaded: {
-                    item.userMessage = message
+                    item.index = index
+                    if (type === "User") {
+                        item.userMessage = message
+                    }
+                    if (type === "System") {
+                        item.itemHeightChanged.connect(test)
+                    }
                 }
             }
+        }
+
+        Loader {
+            Layout.preferredHeight: 40
         }
 
         InputMessage {
@@ -58,9 +81,15 @@ Window {
                 if (messageInputItem.text.length <= 0)
                     return
                 itemModel.append({
-                                     "type": "user",
+                                     "type": "User",
                                      "message": messageInputItem.text
                                  })
+                itemModel.append({
+                                     "type": "System",
+                                     "message": "思考中..."
+                                 })
+                Properties.currentSystemReuqestIndex = view_.count - 1
+                AiClient.sendRequest(messageInputItem.text)
                 messageInputItem.clear()
             }
         }

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(AiClient VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
+set(CMAKE_AUTORCC ON)
 find_package(Qt6 REQUIRED COMPONENTS Quick Network)
 
 qt_standard_project_setup(REQUIRES 6.5)
@@ -12,6 +12,10 @@ qt_add_executable(appAiClient
     main.cpp
     aiclient.h
     aiclient.cpp
+    Quick/QuickFramelessWindow.cpp
+    Quick/QuickFramelessWindow.h
+    Quick/private/QuickFramelessWindowPrivate.cpp
+    Quick/private/QuickFramelessWindowPrivate.h
 )
 
 qt_add_qml_module(appAiClient
@@ -22,6 +26,8 @@ qt_add_qml_module(appAiClient
     InputMessage.qml
     UserMessageItem.qml
     SystemMessageItem.qml
+    LoadingIndicator.qml
+    RESOURCES res.qrc
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -37,6 +43,7 @@ set_target_properties(appAiClient PROPERTIES
 
 target_link_libraries(appAiClient
     PRIVATE Qt6::Quick Qt6::Network
+    dwmapi
 )
 
 include(GNUInstallDirs)
