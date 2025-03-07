@@ -11,6 +11,7 @@ FramelessWindow {
     width: 1075
     height: 750
     Component.onCompleted: {
+        mainWindow.setWindowTitleBar(title_bar)
         mainWindow.moveCenter()
     }
 
@@ -28,18 +29,35 @@ FramelessWindow {
     }
 
     ColumnLayout {
-        anchors.fill: parent
+        function adjustWindowMargins(left_margin, top_margin, right_margin, bottom_margin) {
+            anchors.leftMargin = left_margin + 30
+            anchors.topMargin = top_margin
+            anchors.rightMargin = right_margin + 30
+            anchors.bottomMargin = bottom_margin + 25
+        }
+
         anchors.leftMargin: 30
-        anchors.bottomMargin: 15
-        anchors.rightMargin: 15
-        anchors.topMargin: 15
+        anchors.rightMargin: 30
+        anchors.bottomMargin: 25
+        anchors.fill: parent
+
+        TitleBar {
+            id: title_bar
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+            Layout.alignment: Qt.AlignTop
+        }
+
         ListView {
             id: view_
             Layout.fillHeight: true
             Layout.fillWidth: true
             spacing: 10
             clip: true
+            cacheBuffer: -1
             model: itemModel
+            ScrollBar.vertical: ScrollBar {}
+            ///ScrollIndicator.vertical: ScrollIndicator {}
             delegate: Loader {
 
                 id: loader_
@@ -52,8 +70,7 @@ FramelessWindow {
                 required property string message
                 required property int index
                 width: ListView.view.width
-                asynchronous: true
-                height: type === "User" ? 40 : 0
+                height: type === "User" ? 40 : 110
                 source: type === "User" ? Qt.url(
                                               "UserMessageItem.qml") : Qt.url(
                                               "SystemMessageItem.qml")
@@ -76,7 +93,7 @@ FramelessWindow {
         InputMessage {
             Layout.preferredWidth: parent.width - 20
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredHeight: 40
+            Layout.preferredHeight: 100
             Keys.onReturnPressed: {
                 if (messageInputItem.text.length <= 0)
                     return
@@ -90,6 +107,7 @@ FramelessWindow {
                                  })
                 Properties.currentSystemReuqestIndex = view_.count - 1
                 AiClient.sendRequest(messageInputItem.text)
+                scrollToButtom.start()
                 messageInputItem.clear()
             }
         }

@@ -7,5 +7,6 @@
     </qresource>
     <qresource prefix="/">
         <file>res/ico/deepseek.svg</file>
+        <file>res/ico/LetsIconsSend.svg</file>
     </qresource>
 </RCC>

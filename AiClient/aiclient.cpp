@@ -12,7 +12,7 @@ void AiClient::sendRequest(const QString &prompt) {
 
   // 构造请求体
   QJsonObject body;
-  body["model"] = "deepseek-chat";  // 根据实际情况修改
+  body["model"] = this->m_model;  // 根据实际情况修改
   body["stream"] = true;
 
   QJsonArray messages;
@@ -33,6 +33,8 @@ void AiClient::sendRequest(const QString &prompt) {
   connect(reply, &QNetworkReply::finished, this, &AiClient::handleFinished);
   connect(reply, &QIODevice::readyRead, this, &AiClient::handleReadyRead);
 }
+
+void AiClient::setModel(const QString &model) { this->m_model = model; }
 
 void AiClient::handleReadyRead() {
   while (reply->bytesAvailable()) {
@@ -77,6 +79,7 @@ void AiClient::handleReadyRead() {
 void AiClient::handleFinished() {
   if (reply->error() != QNetworkReply::NoError) {
     emit errorOccurred(reply->errorString());
+
   } else {
     emit finished();
   }

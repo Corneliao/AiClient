@@ -8,10 +8,9 @@ import QtQuick.Layouts
 
 Item {
     id: systemItem
-    height: 0
-
+    height: 30
     property int index
-
+    anchors.rightMargin: 15
     signal itemHeightChanged(int height)
 
     Connections {
@@ -20,6 +19,17 @@ Item {
             if (systemItem.index === Properties.currentSystemReuqestIndex) {
                 var endPosition = area_.text.length
                 area_.insert(endPosition, content)
+            }
+        }
+        function onErrorOccurred(error) {
+            if (systemItem.index === Properties.currentSystemReuqestIndex) {
+                var endPosition = area_.text.length
+                area_.insert(endPosition, error)
+            }
+        }
+        function onFinished() {
+            if (systemItem.index === Properties.currentSystemReuqestIndex) {
+                indication_.destroy()
             }
         }
     }
@@ -49,6 +59,7 @@ Item {
         ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.alignment: Qt.AlignTop
             Rectangle {
                 color: Qt.color("lightgray")
                 radius: 10
@@ -72,14 +83,17 @@ Item {
                 Rectangle {
                     color: Qt.color("white")
                     radius: 10
-                    Layout.preferredHeight: area_.height + 10
+                    Layout.preferredHeight: area_.height
                     Layout.fillWidth: true
+
                     TextArea {
                         id: area_
                         wrapMode: TextArea.WrapAnywhere
                         width: parent.width
+                        readOnly: true
+                        textFormat: TextArea.AutoText
                         height: Math.max(
-                                    0,
+                                    30,
                                     contentHeight + topPadding + bottomPadding)
                         color: Qt.color("#696969")
                         font.pixelSize: 17
@@ -94,6 +108,7 @@ Item {
                 id: indication_
                 Layout.preferredHeight: 20
                 Layout.preferredWidth: 20
+                Layout.alignment: Qt.AlignBottom
             }
         }
         Loader {

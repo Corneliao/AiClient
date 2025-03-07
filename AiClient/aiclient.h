@@ -14,6 +14,8 @@ class AiClient : public QObject {
 
   Q_INVOKABLE void sendRequest(const QString &prompt);
 
+  Q_INVOKABLE void setModel(const QString &model);
+
  signals:
   void receivedDelta(const QString &text);
   void finished();
@@ -28,6 +30,7 @@ class AiClient : public QObject {
   QNetworkAccessManager *manager;
   QNetworkReply *reply = nullptr;
   QByteArray buffer;
+  QString m_model = "deepseek-chat";
 };
 
 #endif  // AICLIENT_H
